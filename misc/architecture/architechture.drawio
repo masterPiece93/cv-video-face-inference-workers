@@ -1,0 +1,476 @@
+<mxfile host="65bd71144e">
+    <diagram id="I4Edc5yUAd-nSucDjShN" name="Page-1">
+        <mxGraphModel dx="720" dy="346" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="high-level-overview" name="1. High-Level Architecture">
+        <mxGraphModel dx="720" dy="346" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title1" value="Interview Video Verification - High-Level Architecture" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="20" width="600" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="user1" value="User" style="shape=actor;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="340" width="60" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="frontend1" value="&lt;b&gt;Frontend UI&lt;/b&gt;&lt;br&gt;(React/Next.js)&lt;br&gt;&lt;br&gt;Cloud Run" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;arcSize=20;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="330" width="160" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="goapi1" value="&lt;b&gt;Go API Gateway&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Sheet Upload&lt;br&gt;• Status Queries&lt;br&gt;• SSE Push&lt;br&gt;&lt;br&gt;Cloud Run" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;arcSize=20;" parent="1" vertex="1">
+                    <mxGeometry x="440" y="300" width="180" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="cloudsql1" value="&lt;b&gt;Cloud SQL&lt;/b&gt;&lt;br&gt;(PostgreSQL)&lt;br&gt;&lt;br&gt;Sheets &amp; Candidates" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="560" width="140" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="pubsub1" value="&lt;b&gt;Cloud Pub/Sub&lt;/b&gt;&lt;br&gt;&lt;br&gt;• candidate-processing&lt;br&gt;• encoding-complete&lt;br&gt;• verification-complete" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;arcSize=20;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="320" width="200" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="encoding1" value="&lt;b&gt;Python Encoding&lt;/b&gt;&lt;br&gt;&lt;b&gt;Service&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Download Videos&lt;br&gt;• Face Detection&lt;br&gt;• Generate Embeddings&lt;br&gt;&lt;br&gt;GKE (GPU)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;arcSize=20;" parent="1" vertex="1">
+                    <mxGeometry x="1020" y="200" width="180" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="verify1" value="&lt;b&gt;Python Verification&lt;/b&gt;&lt;br&gt;&lt;b&gt;Service&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Compare Encodings&lt;br&gt;• Match/Mismatch&lt;br&gt;&lt;br&gt;Cloud Run Jobs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;arcSize=20;" parent="1" vertex="1">
+                    <mxGeometry x="1020" y="420" width="180" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="gcs1" value="&lt;b&gt;Cloud Storage&lt;/b&gt;&lt;br&gt;&lt;br&gt;Face Encodings&lt;br&gt;(.npy files)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="1300" y="320" width="140" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="statusupdater1" value="&lt;b&gt;Go Status&lt;/b&gt;&lt;br&gt;&lt;b&gt;Updater&lt;/b&gt;&lt;br&gt;&lt;br&gt;Cloud Run" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;arcSize=20;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="560" width="140" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="user1" target="frontend1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" value="REST API" style="edgeStyle=orthogonalEdgeStyle;rounded=1;fontSize=10;" parent="1" source="frontend1" target="goapi1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" value="Publish Events" style="edgeStyle=orthogonalEdgeStyle;rounded=1;fontSize=10;" parent="1" source="goapi1" target="pubsub1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4" value="Read/Write" style="edgeStyle=orthogonalEdgeStyle;rounded=1;fontSize=10;" parent="1" source="goapi1" target="cloudsql1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e5" value="Subscribe" style="edgeStyle=orthogonalEdgeStyle;rounded=1;fontSize=10;" parent="1" source="pubsub1" target="encoding1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e6" value="Subscribe" style="edgeStyle=orthogonalEdgeStyle;rounded=1;fontSize=10;" parent="1" source="pubsub1" target="verify1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e7" value="Store / Load" style="edgeStyle=orthogonalEdgeStyle;rounded=1;fontSize=10;" parent="1" source="encoding1" target="gcs1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e8" value="Load" style="edgeStyle=orthogonalEdgeStyle;rounded=1;fontSize=10;" parent="1" source="verify1" target="gcs1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e9" value="Update Status" style="edgeStyle=orthogonalEdgeStyle;rounded=1;fontSize=10;jumpStyle=sharp;entryX=0.855;entryY=0;entryDx=0;entryDy=4.35;entryPerimeter=0;" parent="1" source="encoding1" target="cloudsql1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="590" y="275"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e10" value="Update Status" style="edgeStyle=orthogonalEdgeStyle;rounded=1;fontSize=10;" parent="1" source="verify1" target="cloudsql1" edge="1">
+                    <mxGeometry x="-0.0185" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e11" value="Subscribe" style="edgeStyle=orthogonalEdgeStyle;rounded=1;fontSize=10;" parent="1" source="pubsub1" target="statusupdater1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="820" y="480"/>
+                            <mxPoint x="760" y="480"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e12" value="Push SSE" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=1;fontSize=10;flowAnimation=1;jumpStyle=sharp;" parent="1" source="statusupdater1" target="frontend1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e13" value="Publish" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=1;fontSize=10;strokeColor=#9673a6;" parent="1" source="encoding1" target="pubsub1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1000" y="275"/>
+                            <mxPoint x="1000" y="380"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e14" value="Publish" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=1;fontSize=10;strokeColor=#9673a6;" parent="1" source="verify1" target="pubsub1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1000" y="490"/>
+                            <mxPoint x="1000" y="380"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="upload-flow" name="2. Upload &amp; API Flow">
+        <mxGraphModel dx="720" dy="346" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title2" value="Sheet Upload &amp; API Gateway Flow" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="20" width="400" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_user" value="User" style="shape=actor;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="100" width="40" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_ui" value="&lt;b&gt;React UI&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="100" width="120" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_api" value="&lt;b&gt;Go API Gateway&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="100" width="160" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_db" value="&lt;b&gt;Cloud SQL&lt;/b&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="650" y="90" width="100" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_pubsub" value="&lt;b&gt;Pub/Sub&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="850" y="100" width="120" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="step1" value="1. Upload .xlsx file" style="text;html=1;fontSize=11;fillColor=none;strokeColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="200" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="step2" value="2. POST /api/v1/sheets/upload&lt;br&gt;   (multipart/form-data)" style="text;html=1;fontSize=11;fillColor=none;strokeColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="240" width="250" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="step3" value="3. Parse sheet rows:&lt;br&gt;   - Validate required columns&lt;br&gt;   - Extract: name, email, profile_url, interview_urls" style="text;html=1;fontSize=11;fillColor=none;strokeColor=none;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="300" width="350" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="step4" value="4. Batch INSERT into Cloud SQL:&lt;br&gt;   - INSERT INTO sheets (filename, row_count) ...&lt;br&gt;   - INSERT INTO candidates (sheet_id, name, urls, status=&#39;PENDING&#39;) ..." style="text;html=1;fontSize=11;fillColor=none;strokeColor=none;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="380" width="450" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="step5" value="5. Batch Publish to Pub/Sub:&lt;br&gt;   - Topic: candidate-processing&lt;br&gt;   - 1 message per candidate row&lt;br&gt;   - Payload: {candidateId, profileVideoUrl, interviewVideoUrls}" style="text;html=1;fontSize=11;fillColor=none;strokeColor=none;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="460" width="450" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="step6" value="6. Return HTTP 202 Accepted:&lt;br&gt;   {&quot;sheetId&quot;: &quot;uuid&quot;, &quot;candidateCount&quot;: 1500, &quot;status&quot;: &quot;PROCESSING&quot;}" style="text;html=1;fontSize=11;fillColor=none;strokeColor=none;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="560" width="500" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="step7" value="7. UI shows confirmation &amp; starts polling for status" style="text;html=1;fontSize=11;fillColor=none;strokeColor=none;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="620" width="400" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="sheetformat" value="&lt;b&gt;Expected Google Sheet Format:&lt;/b&gt;" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="220" width="250" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="sheettable" value="&lt;table border=&#39;1&#39; cellpadding=&#39;4&#39; style=&#39;font-size:11px;border-collapse:collapse;&#39;&gt;&lt;tr style=&#39;background:#f0f0f0;&#39;&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Email&lt;/th&gt;&lt;th&gt;Profile Video&lt;/th&gt;&lt;th&gt;Interview Video 1&lt;/th&gt;&lt;th&gt;Interview Video 2&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;John Doe&lt;/td&gt;&lt;td&gt;john@...&lt;/td&gt;&lt;td&gt;https://...&lt;/td&gt;&lt;td&gt;https://...&lt;/td&gt;&lt;td&gt;https://...&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Jane Smith&lt;/td&gt;&lt;td&gt;jane@...&lt;/td&gt;&lt;td&gt;https://...&lt;/td&gt;&lt;td&gt;https://...&lt;/td&gt;&lt;td&gt;https://...&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;fillColor=#fff2cc;strokeColor=#d6b656;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="260" width="500" height="120" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="pubsub-flow" name="3. Pub/Sub Event Flow">
+        <mxGraphModel dx="1320" dy="795" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title3" value="Cloud Pub/Sub - Event-Driven Message Flow" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="350" y="20" width="500" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="t1_label" value="&lt;b&gt;Topic: candidate-processing&lt;/b&gt;" style="text;html=1;fontSize=13;fillColor=none;strokeColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="90" width="250" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="t1_pub" value="&lt;b&gt;Publisher&lt;/b&gt;&lt;br&gt;Go API Gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="130" width="150" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="t1_topic" value="candidate-processing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="130" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="t1_sub" value="&lt;b&gt;Subscriber&lt;/b&gt;&lt;br&gt;Python Encoding Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="130" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="t1_dlq" value="&lt;b&gt;DLQ&lt;/b&gt;&lt;br&gt;candidate-processing-dlq&lt;br&gt;(after 5 retries)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="130" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="t1_e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="t1_pub" target="t1_topic" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="t1_e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="t1_topic" target="t1_sub" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="t1_e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=1;strokeColor=#b85450;" parent="1" source="t1_topic" target="t1_dlq" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="t2_label" value="&lt;b&gt;Topic: encoding-complete&lt;/b&gt;" style="text;html=1;fontSize=13;fillColor=none;strokeColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="260" width="250" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="t2_pub" value="&lt;b&gt;Publisher&lt;/b&gt;&lt;br&gt;Python Encoding Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="300" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="t2_topic" value="encoding-complete" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="300" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="t2_sub" value="&lt;b&gt;Subscriber&lt;/b&gt;&lt;br&gt;Python Verification Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="300" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="t2_e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="t2_pub" target="t2_topic" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="t2_e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="t2_topic" target="t2_sub" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="t3_label" value="&lt;b&gt;Topic: verification-complete&lt;/b&gt;" style="text;html=1;fontSize=13;fillColor=none;strokeColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="430" width="250" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="t3_pub" value="&lt;b&gt;Publisher&lt;/b&gt;&lt;br&gt;Python Verification Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="470" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="t3_topic" value="verification-complete" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="470" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="t3_sub" value="&lt;b&gt;Subscriber&lt;/b&gt;&lt;br&gt;Go Status Updater" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="470" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="t3_e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="t3_pub" target="t3_topic" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="t3_e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="t3_topic" target="t3_sub" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="payload_title" value="&lt;b&gt;Message Payloads&lt;/b&gt;" style="text;html=1;fontSize=13;fillColor=none;strokeColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="600" width="200" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="payload1" value="&lt;b&gt;candidate-processing:&lt;/b&gt;&lt;br&gt;{&lt;br&gt;  &quot;candidateId&quot;: &quot;uuid&quot;,&lt;br&gt;  &quot;sheetId&quot;: &quot;uuid&quot;,&lt;br&gt;  &quot;profileVideoUrl&quot;: &quot;https://...&quot;,&lt;br&gt;  &quot;interviewVideoUrls&quot;: [&quot;url1&quot;, &quot;url2&quot;]&lt;br&gt;}" style="text;html=1;fontSize=11;fillColor=#f5f5f5;strokeColor=#666666;rounded=1;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="640" width="300" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="payload2" value="&lt;b&gt;encoding-complete:&lt;/b&gt;&lt;br&gt;{&lt;br&gt;  &quot;candidateId&quot;: &quot;uuid&quot;,&lt;br&gt;  &quot;encodingPaths&quot;: {&lt;br&gt;    &quot;profile&quot;: &quot;gs://bucket/.../profile.npy&quot;,&lt;br&gt;    &quot;interviews&quot;: [&quot;gs://...&quot;]&lt;br&gt;  }&lt;br&gt;}" style="text;html=1;fontSize=11;fillColor=#f5f5f5;strokeColor=#666666;rounded=1;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="640" width="320" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="payload3" value="&lt;b&gt;verification-complete:&lt;/b&gt;&lt;br&gt;{&lt;br&gt;  &quot;candidateId&quot;: &quot;uuid&quot;,&lt;br&gt;  &quot;result&quot;: &quot;MATCH&quot;,&lt;br&gt;  &quot;confidence&quot;: 0.94,&lt;br&gt;  &quot;details&quot;: [...]&lt;br&gt;}" style="text;html=1;fontSize=11;fillColor=#f5f5f5;strokeColor=#666666;rounded=1;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="770" y="640" width="280" height="130" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="encoding-service" name="4. Encoding Service (Python)">
+        <mxGraphModel dx="1320" dy="795" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title4" value="Python Encoding Service - Internal Flow" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="350" y="20" width="450" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_input" value="&lt;b&gt;Pub/Sub Message&lt;/b&gt;&lt;br&gt;{candidateId, videoUrls}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="120" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_download" value="&lt;b&gt;1. Download Videos&lt;/b&gt;&lt;br&gt;&lt;br&gt;• HTTP GET from URLs&lt;br&gt;• Save to /tmp&lt;br&gt;• Retry 3x on failure&lt;br&gt;• Validate video format" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="240" width="200" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_frames" value="&lt;b&gt;2. Extract Frames&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Sample every 30th frame&lt;br&gt;• Or scene-change detect&lt;br&gt;• Target: 10-20 frames/video&lt;br&gt;• Use OpenCV" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="240" width="200" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_detect" value="&lt;b&gt;3. Face Detection&lt;/b&gt;&lt;br&gt;&lt;br&gt;• MTCNN / RetinaFace&lt;br&gt;• Crop &amp; align faces&lt;br&gt;• Handle: no face found&lt;br&gt;• Handle: multiple faces" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="240" width="200" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_embed" value="&lt;b&gt;4. Generate Embeddings&lt;/b&gt;&lt;br&gt;&lt;br&gt;• ArcFace / InsightFace&lt;br&gt;• 512-dim vector per face&lt;br&gt;• Compute mean per video&lt;br&gt;• GPU accelerated (T4)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="240" width="200" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_store" value="&lt;b&gt;5. Store in GCS&lt;/b&gt;&lt;br&gt;&lt;br&gt;gs://encodings-bucket/&lt;br&gt;  {candidateId}/&lt;br&gt;    profile_encoding.npy&lt;br&gt;    interview_0.npy&lt;br&gt;    interview_1.npy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="440" width="200" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_updatedb" value="&lt;b&gt;6. Update DB&lt;/b&gt;&lt;br&gt;status = ENCODING_COMPLETE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="460" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_publish" value="&lt;b&gt;7. Publish&lt;/b&gt;&lt;br&gt;Topic: encoding-complete" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="460" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="enc_input" target="enc_download" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="enc_download" target="enc_frames" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="enc_frames" target="enc_detect" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_e4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="enc_detect" target="enc_embed" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="860" y="300" as="sourcePoint"/>
+                        <mxPoint x="700" y="440" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="860" y="380"/>
+                            <mxPoint x="700" y="380"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="enc_e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="enc_store" target="enc_updatedb" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_e7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="enc_updatedb" target="enc_publish" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_scale" value="&lt;b&gt;Scaling Strategy:&lt;/b&gt;&lt;br&gt;&lt;br&gt;• GKE with GPU node pool (NVIDIA T4)&lt;br&gt;• Cluster Autoscaler: 0 → 20 nodes&lt;br&gt;• HPA on Pub/Sub backlog metric&lt;br&gt;• 1 candidate per pod (GPU memory)&lt;br&gt;• Preemptible VMs for cost savings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=10;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="440" width="250" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="enc_errors" value="&lt;b&gt;Error Handling:&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Video download fails → retry 3x → ERROR&lt;br&gt;• No face detected → status ERROR&lt;br&gt;• Corrupt video → skip, mark ERROR&lt;br&gt;• Timeout (10min) → nack, retry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=10;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="600" width="250" height="110" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="verification-service" name="5. Verification Service (Python)">
+        <mxGraphModel dx="1320" dy="795" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title5" value="Python Verification Service - Face Matching Logic" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="350" y="20" width="500" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_input" value="&lt;b&gt;Input: encoding-complete message&lt;/b&gt;&lt;br&gt;{candidateId, encodingPaths}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="100" width="250" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_load" value="&lt;b&gt;1. Load Encodings from GCS&lt;/b&gt;&lt;br&gt;&lt;br&gt;• profile_encoding.npy&lt;br&gt;• interview_0_encoding.npy&lt;br&gt;• interview_1_encoding.npy&lt;br&gt;• ..." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="200" width="250" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_compare1" value="&lt;b&gt;2. Compare: Profile vs Each Interview&lt;/b&gt;&lt;br&gt;&lt;br&gt;cosine_similarity(profile_vec, interview_vec)&lt;br&gt;&lt;br&gt;Threshold: &amp;gt; 0.6 = MATCH" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="370" width="300" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_compare2" value="&lt;b&gt;3. Cross-Compare Interviews&lt;/b&gt;&lt;br&gt;&lt;br&gt;Ensure interview_0 ≈ interview_1 ≈ interview_2&lt;br&gt;(all interviews should be same person)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="520" width="300" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_decision" value="&lt;b&gt;4. Determine Result&lt;/b&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="550" y="300" width="180" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_match" value="&lt;b&gt;MATCH&lt;/b&gt;&lt;br&gt;All similarities &amp;gt; 0.6&lt;br&gt;Same person confirmed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="190" width="180" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_mismatch" value="&lt;b&gt;MISMATCH&lt;/b&gt;&lt;br&gt;One or more &amp;lt; 0.4&lt;br&gt;Different person detected" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="310" width="180" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_inconclusive" value="&lt;b&gt;INCONCLUSIVE&lt;/b&gt;&lt;br&gt;Between 0.4 and 0.6&lt;br&gt;Manual review needed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="830" y="415" width="180" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="v_input" target="v_load" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="v_load" target="v_compare1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="v_compare1" target="v_compare2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_e4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="v_compare1" target="v_decision" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="v_decision" target="v_match" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="v_decision" target="v_mismatch" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_e7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="v_decision" target="v_inconclusive" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_output" value="&lt;b&gt;5. Update DB &amp; Publish&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Update candidates.status&lt;br&gt;• Store verification_result JSONB&lt;br&gt;• Publish to verification-complete" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="550" y="515" width="250" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_e8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" parent="1" source="v_compare2" target="v_output" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="v_matrix" value="&lt;b&gt;Example Similarity Matrix:&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;table border=&#39;1&#39; cellpadding=&#39;3&#39; style=&#39;font-size:10px;border-collapse:collapse;&#39;&gt;&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;Profile&lt;/th&gt;&lt;th&gt;Int.1&lt;/th&gt;&lt;th&gt;Int.2&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Profile&lt;/td&gt;&lt;td&gt;1.00&lt;/td&gt;&lt;td&gt;0.92&lt;/td&gt;&lt;td&gt;0.88&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Int.1&lt;/td&gt;&lt;td&gt;0.92&lt;/td&gt;&lt;td&gt;1.00&lt;/td&gt;&lt;td&gt;0.95&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Int.2&lt;/td&gt;&lt;td&gt;0.88&lt;/td&gt;&lt;td&gt;0.95&lt;/td&gt;&lt;td&gt;1.00&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;br&gt;Result: MATCH ✓" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="530" width="250" height="180" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="gcp-infra" name="6. GCP Infrastructure &amp; Data Model">
+        <mxGraphModel dx="1320" dy="795" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title6" value="GCP Infrastructure &amp; Data Model" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="20" width="400" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="vpc_box" value="&lt;b&gt;GCP Project - VPC Network&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#4285F4;dashed=1;dashPattern=5 5;verticalAlign=top;fontSize=14;fontColor=#4285F4;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="70" width="1320" height="400" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr_label" value="&lt;b&gt;Cloud Run (Serverless)&lt;/b&gt;" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;fontColor=#4285F4;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="95" width="200" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr_frontend" value="&lt;b&gt;Frontend&lt;/b&gt;&lt;br&gt;React/Next.js&lt;br&gt;min:0 max:10&lt;br&gt;512MB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="130" width="130" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr_api" value="&lt;b&gt;Go API&lt;/b&gt;&lt;br&gt;min:1 max:100&lt;br&gt;1GB, conc:80" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="220" y="130" width="130" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="cr_updater" value="&lt;b&gt;Status Updater&lt;/b&gt;&lt;br&gt;Go&lt;br&gt;min:0 max:10&lt;br&gt;256MB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="370" y="130" width="130" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="gke_label" value="&lt;b&gt;GKE Cluster (GPU Workloads)&lt;/b&gt;" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;fontColor=#34A853;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="240" width="250" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="gke_enc" value="&lt;b&gt;Encoding Workers&lt;/b&gt;&lt;br&gt;Python + CUDA&lt;br&gt;NVIDIA T4 GPU&lt;br&gt;Autoscaler: 0→20&lt;br&gt;Preemptible" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="275" width="150" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="gke_ver" value="&lt;b&gt;Verification Workers&lt;/b&gt;&lt;br&gt;Python (CPU)&lt;br&gt;4 vCPU, 8GB&lt;br&gt;Autoscaler: 0→50" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="275" width="150" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="ms_label" value="&lt;b&gt;Managed Services&lt;/b&gt;" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;fontColor=#EA4335;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="95" width="200" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="ms_sql" value="&lt;b&gt;Cloud SQL&lt;/b&gt;&lt;br&gt;PostgreSQL 15&lt;br&gt;db-custom-4-16384&lt;br&gt;HA enabled&lt;br&gt;Private IP" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="125" width="150" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="ms_pubsub" value="&lt;b&gt;Cloud Pub/Sub&lt;/b&gt;&lt;br&gt;3 Topics&lt;br&gt;DLQ enabled&lt;br&gt;Exponential backoff" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="780" y="130" width="150" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="ms_gcs" value="&lt;b&gt;Cloud Storage&lt;/b&gt;&lt;br&gt;Standard class&lt;br&gt;Encodings bucket&lt;br&gt;Lifecycle: 30d" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="125" width="150" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="ms_secret" value="&lt;b&gt;Secret Manager&lt;/b&gt;&lt;br&gt;DB creds, API keys" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="1140" y="130" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="sec_label" value="&lt;b&gt;Security &amp; Networking&lt;/b&gt;" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;fontColor=#FBBC04;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="260" width="200" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="sec_iap" value="&lt;b&gt;IAP&lt;/b&gt;&lt;br&gt;OAuth 2.0" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="295" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="sec_lb" value="&lt;b&gt;Cloud LB&lt;/b&gt;&lt;br&gt;HTTPS + SSL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="295" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="sec_vpc" value="&lt;b&gt;VPC Connector&lt;/b&gt;&lt;br&gt;Private access" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="840" y="295" width="120" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="sec_iam" value="&lt;b&gt;IAM&lt;/b&gt;&lt;br&gt;Least-privilege SAs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="980" y="295" width="130" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="mon_label" value="&lt;b&gt;Observability&lt;/b&gt;" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;fontColor=#4285F4;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="370" width="150" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="mon_monitoring" value="Cloud Monitoring" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="400" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="mon_logging" value="Cloud Logging" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="740" y="400" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="mon_trace" value="Cloud Trace" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="880" y="400" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="db_title" value="&lt;b&gt;Database Schema (PostgreSQL)&lt;/b&gt;" style="text;html=1;fontSize=14;fillColor=none;strokeColor=none;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="500" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="db_sheets" value="&lt;b&gt;sheets&lt;/b&gt;&lt;hr&gt;&lt;div style=&#39;text-align:left;font-size:11px;padding:4px;&#39;&gt;id: UUID (PK)&lt;br&gt;filename: TEXT&lt;br&gt;uploaded_by: TEXT&lt;br&gt;uploaded_at: TIMESTAMPTZ&lt;br&gt;row_count: INT&lt;br&gt;status: TEXT&lt;br&gt;&lt;i&gt;(PROCESSING|COMPLETE|PARTIAL_ERROR)&lt;/i&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;verticalAlign=top;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="550" width="250" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="db_candidates" value="&lt;b&gt;candidates&lt;/b&gt;&lt;hr&gt;&lt;div style=&#39;text-align:left;font-size:11px;padding:4px;&#39;&gt;id: UUID (PK)&lt;br&gt;sheet_id: UUID (FK → sheets.id)&lt;br&gt;row_number: INT&lt;br&gt;candidate_name: TEXT&lt;br&gt;candidate_email: TEXT&lt;br&gt;profile_video_url: TEXT&lt;br&gt;interview_video_urls: JSONB&lt;br&gt;status: TEXT&lt;br&gt;&lt;i&gt;(PENDING|ENCODING|ENCODING_COMPLETE|&lt;br&gt;VERIFYING|MATCH|MISMATCH|INCONCLUSIVE|ERROR)&lt;/i&gt;&lt;br&gt;verification_result: JSONB&lt;br&gt;error_message: TEXT&lt;br&gt;created_at: TIMESTAMPTZ&lt;br&gt;updated_at: TIMESTAMPTZ&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;verticalAlign=top;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="550" width="300" height="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="db_fk" value="1:N" style="edgeStyle=orthogonalEdgeStyle;rounded=1;fontSize=11;fontStyle=1;" parent="1" source="db_sheets" target="db_candidates" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="db_indexes" value="&lt;b&gt;Indexes:&lt;/b&gt;&lt;br&gt;&lt;br&gt;• idx_candidates_sheet_id (sheet_id)&lt;br&gt;• idx_candidates_status (status)&lt;br&gt;• idx_candidates_sheet_status (sheet_id, status)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="570" width="300" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="status_flow" value="&lt;b&gt;Candidate Status Flow:&lt;/b&gt;&lt;br&gt;&lt;br&gt;PENDING → ENCODING → ENCODING_COMPLETE → VERIFYING → MATCH / MISMATCH / INCONCLUSIVE&lt;br&gt;&lt;br&gt;Any stage can → ERROR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=10;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="700" width="350" height="90" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

@@ -1,0 +1,18 @@
+I want to get a highly scalable and performant architechture for a project that I want to develop.
+This project is for verifying if the multiple recorded interview videos have the same candidate .
+The requirements of the project are : 
+1. a UI screen where a user will upload a google sheet .
+    - this google sheet will contain multiple interview videos and a candidate profile video
+    - each row in this sheet corresponds to a candidate information and aforementioned videos 
+    - this sheet can contain thousands of such rows ( i.e candidates )
+The backend API wil be served from GoLang Server .
+2. once the user uploads this sheet he should get an immediate confirmation that the sheet is uploaded
+3. the data in sheet shall be recorded in database .
+4. the video urls in the data of the uploaded sheet need to be processed by Python and encodings needs to be generated for these videos and stored in bucket .
+5. then based on the encodings , the python needs to verify if all the interview videos have same person and that same person is the one who is present in profile video 
+    - this status needs to be updated in database 
+6. based on these , the Golang server must display on the UI the processing status of each candidate 
+
+I want to use GCP as my cloud provider
+
+please give a detailed microservice based event driven architechture for this project
