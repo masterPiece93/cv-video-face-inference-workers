@@ -1,0 +1,10 @@
+__pycache__
+*.pyc
+*.pyo
+.git
+.gitignore
+.env
+*.md
+workers/face_encoding_worker/tests
+workers/face_verification_worker/tests
+workers/onboarding_verification_worker/tests

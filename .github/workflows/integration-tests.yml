@@ -1,0 +1,122 @@
+name: Integration Tests
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+      - "release/**"
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  integration:
+    name: Integration Tests – Python 3.11
+    runs-on: ubuntu-latest
+
+    env:
+      PUBSUB_EMULATOR_HOST: localhost:8085
+      STORAGE_EMULATOR_HOST: http://localhost:4443
+
+    steps:
+      # ── Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Start emulators via docker compose ────────────────────────────────
+      - name: Start GCP emulators
+        run: docker compose -f tests/integration/docker-compose.yml up -d
+
+      - name: Wait for Pub/Sub emulator
+        run: |
+          echo "Waiting for Pub/Sub emulator on :8085..."
+          timeout 60 bash -c 'until curl -sf http://localhost:8085; do sleep 2; done'
+          echo "✅ Pub/Sub emulator ready"
+
+      - name: Wait for fake-GCS
+        run: |
+          echo "Waiting for fake-GCS on :4443..."
+          timeout 60 bash -c 'until curl -sf http://localhost:4443/storage/v1/b; do sleep 2; done'
+          echo "✅ fake-GCS ready"
+
+      # ── Python setup ──────────────────────────────────────────────────────
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-integration-${{ hashFiles('requirements-dev.txt', 'common_requirements/py3.11.txt', 'workers/*/requirements/py3.11.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-integration-
+            ${{ runner.os }}-pip-
+
+      # ── System deps ───────────────────────────────────────────────────────
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            cmake \
+            libgl1
+
+      # ── Python dependencies ───────────────────────────────────────────────
+      - name: Install common requirements
+        run: pip install --no-cache-dir -r common_requirements/py3.11.txt
+
+      - name: Install worker requirements
+        run: |
+          pip install --no-cache-dir -r workers/face_encoding_worker/requirements/py3.11.txt
+          pip install --no-cache-dir -r workers/face_verification_worker/requirements/py3.11.txt
+          pip install --no-cache-dir -r workers/onboarding_verification_worker/requirements/py3.11.txt
+
+      - name: Install dev / test dependencies
+        run: pip install --no-cache-dir -r requirements-dev.txt
+
+      # ── Run integration tests ─────────────────────────────────────────────
+      - name: Run integration tests
+        run: |
+          python -m pytest tests/integration/ \
+            -v \
+            --tb=short \
+            -m integration \
+            --no-cov \
+            --junit-xml=integration-results.xml
+
+      # ── Cleanup ───────────────────────────────────────────────────────────
+      - name: Stop emulators
+        if: always()
+        run: docker compose -f tests/integration/docker-compose.yml down -v
+
+      # ── Upload results ────────────────────────────────────────────────────
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-results
+          path: integration-results.xml
+          retention-days: 30
+
+      # ── Job summary ───────────────────────────────────────────────────────
+      - name: Integration test summary
+        if: always()
+        run: |
+          echo "### Integration Test Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f integration-results.xml ]; then
+            TESTS=$(grep -oP 'tests="\K[^"]+' integration-results.xml | head -1)
+            FAILURES=$(grep -oP 'failures="\K[^"]+' integration-results.xml | head -1)
+            ERRORS=$(grep -oP 'errors="\K[^"]+' integration-results.xml | head -1)
+            echo "| Metric | Count |" >> "$GITHUB_STEP_SUMMARY"
+            echo "|--------|-------|" >> "$GITHUB_STEP_SUMMARY"
+            echo "| Tests | ${TESTS:-0} |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| Failures | ${FAILURES:-0} |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| Errors | ${ERRORS:-0} |" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "⚠️ No test results found" >> "$GITHUB_STEP_SUMMARY"
+          fi

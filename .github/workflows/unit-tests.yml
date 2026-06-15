@@ -1,0 +1,104 @@
+name: Unit Tests & Coverage
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+      - "release/**"
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  test:
+    name: pytest – Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+      # ── Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Python setup ──────────────────────────────────────────────────────
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-tests-${{ matrix.python-version }}-${{ hashFiles('requirements-dev.txt', 'common_requirements/py3.11.txt', 'workers/*/requirements/py3.11.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-tests-${{ matrix.python-version }}-
+            ${{ runner.os }}-pip-
+
+      # ── System deps required by opencv / face_recognition ─────────────────
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            cmake \
+            libgl1
+
+      # ── Python dependencies ───────────────────────────────────────────────
+      - name: Install common requirements
+        run: pip install --no-cache-dir -r common_requirements/py3.11.txt
+
+      - name: Install worker requirements
+        run: |
+          pip install --no-cache-dir -r workers/face_encoding_worker/requirements/py3.11.txt
+          pip install --no-cache-dir -r workers/face_verification_worker/requirements/py3.11.txt
+          pip install --no-cache-dir -r workers/onboarding_verification_worker/requirements/py3.11.txt
+
+      - name: Install dev / test dependencies
+        run: pip install --no-cache-dir -r requirements-dev.txt
+
+      # ── Run tests with coverage ────────────────────────────────────────────
+      - name: Run unit tests
+        run: |
+          python -m pytest tests/unit/ \
+            -v \
+            --tb=short \
+            -m "not integration" \
+            --cov=workers \
+            --cov=common \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml \
+            --cov-report=html:htmlcov \
+            --cov-fail-under=70
+
+      # ── Upload coverage XML for badge / downstream tools ──────────────────
+      - name: Upload coverage report (XML)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml-py${{ matrix.python-version }}
+          path: coverage.xml
+          retention-days: 30
+
+      - name: Upload coverage report (HTML)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html-py${{ matrix.python-version }}
+          path: htmlcov/
+          retention-days: 30
+
+      # ── Publish coverage summary to job summary page ──────────────────────
+      - name: Coverage summary
+        if: always()
+        run: |
+          python -m pytest tests/unit/ \
+            --co -q --no-header 2>/dev/null | tail -1 || true
+          echo "### Coverage Report" >> "$GITHUB_STEP_SUMMARY"
+          python -m coverage report --skip-empty >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true

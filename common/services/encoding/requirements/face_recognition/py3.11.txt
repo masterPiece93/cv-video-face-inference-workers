@@ -1,0 +1,4 @@
+# Optional: face_recognition encoder (dlib-based)
+face-recognition>=1.3.0
+Pillow>=10.0.0
+numpy>=1.24.0

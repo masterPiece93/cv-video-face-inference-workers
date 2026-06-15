@@ -1,0 +1,38 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = [
+    "-v",
+    "--tb=short",
+    "--cov=workers",
+    "--cov=common",
+    "--cov-report=term-missing",
+    "--cov-report=html:htmlcov",
+    "--cov-report=xml:coverage.xml",
+    "--cov-fail-under=70",
+]
+markers = [
+    "integration: marks tests that require Docker emulators (Pub/Sub + GCS)",
+]
+
+[tool.coverage.run]
+source = ["workers", "common"]
+omit = [
+    "*/venv*",
+    "*/venv3-11/*",
+    "*/__pycache__/*",
+    "*/tests/*",
+    "*/local_testing/*",
+    "*/pbgen/*",
+    "*/main.py",
+    "*/settings.py",
+]
+
+[tool.coverage.report]
+show_missing  = true
+skip_covered  = false
+skip_empty    = true
+
+[tool.coverage.html]
+directory = "htmlcov"
+title     = "GTA ECI Workers – Coverage Report"

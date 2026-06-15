@@ -1,0 +1,45 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Docker Compose for Load Testing
+#
+# Full local stack:
+#   - Pub/Sub emulator (port 8685)
+#   - fake-gcs-server  (port 5443)
+#
+# Ports are different from integration tests to avoid conflicts.
+#
+# Usage:
+#   docker compose -f tests/load/docker-compose.yml up -d
+#   python tests/load/cli.py run --profile ramp --messages 20 --managed
+#   docker compose -f tests/load/docker-compose.yml down -v
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  pubsub-emulator:
+    image: google/cloud-sdk:emulators
+    container_name: loadtest-pubsub-emulator
+    ports:
+      - "8685:8685"
+    command: >
+      gcloud beta emulators pubsub start
+      --host-port=0.0.0.0:8685
+      --project=loadtest-project
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8685"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+
+  fake-gcs:
+    image: fsouza/fake-gcs-server:latest
+    container_name: loadtest-fake-gcs
+    ports:
+      - "5443:5443"
+    command: >
+      -scheme http
+      -port 5443
+      -public-host localhost:5443
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5443/storage/v1/b"]
+      interval: 5s
+      timeout: 3s
+      retries: 10

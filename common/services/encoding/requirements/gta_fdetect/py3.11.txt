@@ -1,0 +1,3 @@
+# Optional: fdetect gRPC encoder
+grpcio>=1.59.0
+protobuf>=4.25.0

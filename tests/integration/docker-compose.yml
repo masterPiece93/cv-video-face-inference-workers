@@ -1,0 +1,46 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Docker Compose for Integration Tests
+#
+# Provides GCP emulators:
+#   - Pub/Sub emulator (port 8085)
+#   - fake-gcs-server  (port 4443)
+#
+# Usage (local):
+#   docker compose -f tests/integration/docker-compose.yml up -d
+#   pytest tests/integration/ -m integration
+#   docker compose -f tests/integration/docker-compose.yml down -v
+#
+# Usage (CI):
+#   Automatically started/stopped by .github/workflows/integration-tests.yml
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  pubsub-emulator:
+    image: google/cloud-sdk:emulators
+    container_name: integration-pubsub-emulator
+    ports:
+      - "8085:8085"
+    command: >
+      gcloud beta emulators pubsub start
+      --host-port=0.0.0.0:8085
+      --project=integration-test-project
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8085"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+
+  fake-gcs:
+    image: fsouza/fake-gcs-server:latest
+    container_name: integration-fake-gcs
+    ports:
+      - "4443:4443"
+    command: >
+      -scheme http
+      -port 4443
+      -public-host localhost:4443
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4443/storage/v1/b"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
