@@ -239,6 +239,26 @@ OnBoarding Flow
 
 **Cloud Storage ( Bucket )**
 
+The workers now support selectable object storage via environment variable:
+
+- `STORAGE_PROVIDER=gcp` (default, backward compatible)
+- `STORAGE_PROVIDER=gcs` (alias of `gcp`)
+- `STORAGE_PROVIDER=minio`
+
+When using `minio`, configure:
+
+- `MINIO_ENDPOINT` (example: `localhost:9000`)
+- `MINIO_ACCESS_KEY`
+- `MINIO_SECRET_KEY`
+- `MINIO_SECURE` (`true` / `false`, default `false`)
+- `MINIO_REGION` (optional, default `us-east-1`)
+
+Notes:
+
+- Message schema stays unchanged (`bucket_name` and object paths are reused).
+- Pub/Sub remains on GCP in the current architecture.
+- Existing GCP flow remains default if `STORAGE_PROVIDER` is not set.
+
 - Bucket Name : tdx-gta-*<ENV_SHORTHAND>*-external-candidature-records
 - Base Paths :
      - snippet_base_path  :  "video_snippets/"

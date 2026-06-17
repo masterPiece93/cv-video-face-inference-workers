@@ -12,7 +12,7 @@ from typing import Dict, Optional
 
 import numpy as np
 
-from common.services.cloud.gcp.storage import GCPStorageService
+from common.services.cloud.storage.base import StorageService
 from common.services.errors import NonRecoverableError, RecoverableError
 from common.utils.helpers import (
     build_candidate_base_path,
@@ -35,7 +35,7 @@ class VideoFaceVerificationService:
     def __init__(
         self,
         strategy: BaseVerificationStrategy,
-        storage: GCPStorageService,
+        storage: StorageService,
         output_handler: VerificationOutputHandler,
     ):
         """Initialize the verification service.

@@ -3,7 +3,7 @@ import os
 import sys
 from enum import Enum
 from pathlib import Path
-from typing import Final
+from typing import Any, Final, cast
 
 # Add paths to sys.path so that 'common' package is importable in all environments:
 #   - Docker (common/ copied alongside main.py in /app)
@@ -24,7 +24,7 @@ for _path in _CANDIDATE_PATHS:
 import logging
 
 from common.services.cloud.gcp.pubsub import GCPPublisher, GCPSubscriber
-from common.services.cloud.gcp.storage import GCPStorageService
+from common.services.cloud.storage import get_storage_service
 from common.services.encoding import get_encoder
 from common.services.logging_service import get_logger
 from workers.face_encoding_worker.services.encoding import VideoFaceEncodingService
@@ -65,9 +65,9 @@ ENV_NAME: Final[EnvName] = EnvName[
 
 match ENV_NAME:
     case EnvName.unspecified:
-        ENV_FILE: Final[str] = str(_ENVS_DIR / ".env")
+        ENV_FILE = str(_ENVS_DIR / ".env")
     case _:
-        ENV_FILE: Final[str] = str(_ENVS_DIR / f".env.{ENV_NAME.value}")
+        ENV_FILE = str(_ENVS_DIR / f".env.{ENV_NAME.value}")
 
 
 def create_app(settings: Settings) -> tuple:
@@ -81,8 +81,8 @@ def create_app(settings: Settings) -> tuple:
     """
     sa_path = str(settings.gcp.sa_path) if settings.gcp.sa_path else None
 
-    # Storage
-    storage = GCPStorageService(sa_path=sa_path)
+    # Storage (provider selected by STORAGE_PROVIDER env var; default=gcp)
+    storage = get_storage_service(sa_path=sa_path)
 
     # Encoder — pluggable backend
     if settings.encoder_backend == "fdetect":
@@ -90,7 +90,7 @@ def create_app(settings: Settings) -> tuple:
             raise ValueError("FDETECT_CHANNEL must be set when encoder_backend=fdetect")
         encoder = get_encoder("fdetect", channel_address=settings.fdetect_channel)
         # Pattern 4: Fail fast — verify fdetect is reachable at startup
-        if not encoder.ping():
+        if not cast(Any, encoder).ping():
             raise RuntimeError(
                 f"fdetect gRPC service at {settings.fdetect_channel} is unreachable. "
                 "Application will not start."
@@ -151,7 +151,7 @@ def main() -> None:
     from dotenv import load_dotenv
     load_dotenv(ENV_FILE, override=True)
 
-    settings = Settings(_env_file=ENV_FILE)
+    settings = Settings()  # type: ignore[call-arg]
 
     logger = get_logger(
         settings.service_name,
@@ -180,15 +180,18 @@ def main() -> None:
     #   • STORAGE_EMULATOR_HOST set  → GCS uses fake-gcs (no ADC needed for GCS)
     #   • Neither set                → both use live GCP (ADC required)
     #   • Only PUBSUB set            → mixed: emulator Pub/Sub + live GCS (ADC needed for GCS)
-    _pubsub_emulated  = bool(os.environ.get("PUBSUB_EMULATOR_HOST"))
-    _storage_emulated = bool(os.environ.get("STORAGE_EMULATOR_HOST"))
-    _needs_adc = (not _pubsub_emulated or not _storage_emulated) and not settings.gcp.sa_path
+    _pubsub_emulated = bool(os.environ.get("PUBSUB_EMULATOR_HOST"))
+    _storage_provider = os.getenv("STORAGE_PROVIDER", "gcp").strip().lower()
+    _uses_gcp_storage = _storage_provider in {"gcp", "gcs"}
+    _storage_emulated = _uses_gcp_storage and bool(os.environ.get("STORAGE_EMULATOR_HOST"))
+    _needs_adc = (not _pubsub_emulated or (_uses_gcp_storage and not _storage_emulated)) and not settings.gcp.sa_path
 
     if _needs_adc:
         from common.services.cloud.gcp_authenticate import check_gcp_adc_status
         _mode = (
-            "live GCS + emulator Pub/Sub" if _pubsub_emulated
+            "live GCS + emulator Pub/Sub" if (_uses_gcp_storage and _pubsub_emulated)
             else "live Pub/Sub + emulator GCS" if _storage_emulated
+            else "live Pub/Sub + non-GCP storage" if (not _uses_gcp_storage)
             else "fully live GCP"
         )
         logger.info(f"ADC check  [{_mode}] …")

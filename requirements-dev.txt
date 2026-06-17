@@ -7,6 +7,9 @@ types-requests>=2.31.0
 # Integration tests
 testcontainers>=4.0.0
 requests>=2.31.0
+boto3>=1.34.0
+opencv-python-headless>=4.10.0
+scikit-learn>=1.5.0
 
 # Load testing
 click>=8.1.0

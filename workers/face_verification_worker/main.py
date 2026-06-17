@@ -19,7 +19,7 @@ for _path in _CANDIDATE_PATHS:
 import logging
 
 from common.services.cloud.gcp.pubsub import GCPPublisher, GCPSubscriber
-from common.services.cloud.gcp.storage import GCPStorageService
+from common.services.cloud.storage import get_storage_service
 from common.services.logging_service import get_logger
 from workers.face_verification_worker.services.strategies import get_strategy
 from workers.face_verification_worker.services.verification import VideoFaceVerificationService
@@ -58,14 +58,14 @@ ENV_NAME: Final[EnvName] = EnvName[
 
 match ENV_NAME:
     case EnvName.unspecified:
-        ENV_FILE: Final[str] = str(_ENVS_DIR / ".env")
+        ENV_FILE = str(_ENVS_DIR / ".env")
     case _:
-        ENV_FILE: Final[str] = str(_ENVS_DIR / f".env.{ENV_NAME.value}")
+        ENV_FILE = str(_ENVS_DIR / f".env.{ENV_NAME.value}")
 
 
 def create_app(settings: Settings) -> tuple:
     sa_path = str(settings.gcp.sa_path) if settings.gcp.sa_path else None
-    storage = GCPStorageService(sa_path=sa_path)
+    storage = get_storage_service(sa_path=sa_path)
 
     publisher = GCPPublisher(
         project_id=settings.gcp.project_id,
@@ -113,7 +113,7 @@ def main() -> None:
     from dotenv import load_dotenv
     load_dotenv(ENV_FILE, override=True)
 
-    settings = Settings(_env_file=ENV_FILE)
+    settings = Settings()  # type: ignore[call-arg]
 
     logger = get_logger(
         settings.service_name,

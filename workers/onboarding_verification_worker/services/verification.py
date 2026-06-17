@@ -14,7 +14,7 @@ from typing import Dict, List, Optional
 
 import numpy as np
 
-from common.services.cloud.gcp.storage import GCPStorageService
+from common.services.cloud.storage.base import StorageService
 from common.services.encoding import BaseEncoder
 from common.services.errors import NonRecoverableError, RecoverableError
 from common.utils.helpers import (
@@ -37,7 +37,7 @@ class OnboardingVerificationService:
     def __init__(
         self,
         encoder: BaseEncoder,
-        storage: GCPStorageService,
+        storage: StorageService,
         output_handler: OnboardingOutputHandler,
         tolerance: float = 0.6,
     ):

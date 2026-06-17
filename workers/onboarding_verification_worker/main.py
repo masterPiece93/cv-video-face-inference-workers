@@ -3,7 +3,7 @@ import os
 import sys
 from enum import Enum
 from pathlib import Path
-from typing import Final
+from typing import Any, Final, cast
 
 _SCRIPT_DIR = Path(__file__).resolve().parent
 _CANDIDATE_PATHS = [_SCRIPT_DIR]
@@ -19,7 +19,7 @@ for _path in _CANDIDATE_PATHS:
 import logging
 
 from common.services.cloud.gcp.pubsub import GCPPublisher, GCPSubscriber
-from common.services.cloud.gcp.storage import GCPStorageService
+from common.services.cloud.storage import get_storage_service
 from common.services.encoding import get_encoder
 from common.services.logging_service import get_logger
 from workers.onboarding_verification_worker.services.verification import OnboardingVerificationService
@@ -58,21 +58,21 @@ ENV_NAME: Final[EnvName] = EnvName[
 
 match ENV_NAME:
     case EnvName.unspecified:
-        ENV_FILE: Final[str] = str(_ENVS_DIR / ".env")
+        ENV_FILE = str(_ENVS_DIR / ".env")
     case _:
-        ENV_FILE: Final[str] = str(_ENVS_DIR / f".env.{ENV_NAME.value}")
+        ENV_FILE = str(_ENVS_DIR / f".env.{ENV_NAME.value}")
 
 
 def create_app(settings: Settings) -> tuple:
     sa_path = str(settings.gcp.sa_path) if settings.gcp.sa_path else None
-    storage = GCPStorageService(sa_path=sa_path)
+    storage = get_storage_service(sa_path=sa_path)
 
     if settings.encoder_backend == "fdetect":
         if not settings.fdetect_channel:
             raise ValueError("FDETECT_CHANNEL must be set when encoder_backend=fdetect")
         encoder = get_encoder("fdetect", channel_address=settings.fdetect_channel)
         # Ping Test: Fail fast — verify fdetect is reachable at startup
-        if not encoder.ping():
+        if not cast(Any, encoder).ping():
             raise RuntimeError(
                 f"fdetect gRPC service at {settings.fdetect_channel} is unreachable. "
                 "Application will not start."
@@ -125,7 +125,7 @@ def main() -> None:
     from dotenv import load_dotenv
     load_dotenv(ENV_FILE, override=True)
 
-    settings = Settings(_env_file=ENV_FILE)
+    settings = Settings()  # type: ignore[call-arg]
 
     logger = get_logger(
         settings.service_name,
