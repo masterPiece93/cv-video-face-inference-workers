@@ -1,10 +1,9 @@
-# ECI ( External Candidate Interview ) Workers <small><sup>GlobalTA</sup></small>
+# Face Inference Workers
 
-[![Unit Tests & Coverage](https://github.com/telusinternational-is/gta-ai-eci-workers/actions/workflows/unit-tests.yml/badge.svg?branch=develop)](https://github.com/telusinternational-is/gta-ai-eci-workers/actions/workflows/unit-tests.yml)
-[![Integration Tests](https://github.com/telusinternational-is/gta-ai-eci-workers/actions/workflows/integration-tests.yml/badge.svg?branch=develop)](https://github.com/telusinternational-is/gta-ai-eci-workers/actions/workflows/integration-tests.yml)
-[![Mypy Type Check](https://github.com/telusinternational-is/gta-ai-eci-workers/actions/workflows/mypy.yml/badge.svg?branch=develop)](https://github.com/telusinternational-is/gta-ai-eci-workers/actions/workflows/mypy.yml)
+[![Unit Tests & Coverage](https://github.com/masterPiece93/cv-video-face-inference-workers/actions/workflows/unit-tests.yml/badge.svg?branch=develop)](https://github.com/masterPiece93/cv-video-face-inference-workers/actions/workflows/unit-tests.yml)
+[![Integration Tests](https://github.com/masterPiece93/cv-video-face-inference-workers/actions/workflows/integration-tests.yml/badge.svg?branch=develop)](https://github.com/masterPiece93/cv-video-face-inference-workers/actions/workflows/integration-tests.yml)
+[![Mypy Type Check](https://github.com/masterPiece93/cv-video-face-inference-workers/actions/workflows/mypy.yml/badge.svg?branch=develop)](https://github.com/masterPiece93/cv-video-face-inference-workers/actions/workflows/mypy.yml)
 
-`eci` refers to candidate interviews that are conducted externally , outside of the Global TA Platform , but we handle their e2e monitoring and ai verification .
 
 This process involves multiple workers , invoked in a chain or events .
 
