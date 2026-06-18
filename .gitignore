@@ -6,6 +6,8 @@ tests/load/fixtures/*.json
 **/venv**/
 # # log files
 *.log
+# # minio data
+.minio-data
 # # miscellaneous
 local_testing/
 

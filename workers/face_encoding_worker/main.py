@@ -48,6 +48,10 @@ class EnvName(str, Enum):
     ENV_NAME=qa     →  envs/.env.qa
     ENV_NAME=prod   →  envs/.env.prod
     (unset)         →  envs/.env         (default)
+
+    Note:
+        The storage backend (GCS vs MinIO) is NOT an environment name — it is
+        selected by the ``STORAGE_PROVIDER`` setting inside the chosen env file.
     """
     local       = "local"
     dev         = "dev"
@@ -81,8 +85,18 @@ def create_app(settings: Settings) -> tuple:
     """
     sa_path = str(settings.gcp.sa_path) if settings.gcp.sa_path else None
 
-    # Storage (provider selected by STORAGE_PROVIDER env var; default=gcp)
-    storage = get_storage_service(sa_path=sa_path)
+    # Storage — provider chosen by the STORAGE_PROVIDER setting (default=gcp).
+    # The factory receives the provider name + connection settings; it does not
+    # read any environment variables itself.
+    storage = get_storage_service(
+        settings.storage_provider,
+        sa_path=sa_path,
+        minio_endpoint=settings.minio.endpoint,
+        minio_access_key=settings.minio.access_key,
+        minio_secret_key=settings.minio.secret_key,
+        minio_secure=settings.minio.secure,
+        minio_region=settings.minio.region,
+    )
 
     # Encoder — pluggable backend
     if settings.encoder_backend == "fdetect":
@@ -168,6 +182,11 @@ def main() -> None:
         if h not in root.handlers:
             root.addHandler(h)
 
+    # Quiet noisy third-party loggers (especially boto3/botocore at DEBUG when
+    # STORAGE_PROVIDER=minio) so the worker's own logs stay readable.
+    for _noisy in ("boto3", "botocore", "s3transfer", "urllib3"):
+        logging.getLogger(_noisy).setLevel(logging.WARNING)
+
     logger.info(f"Environment : '{ENV_NAME.value or 'default'}' → {ENV_FILE}")
     logger.info(
         f"Starting {settings.service_name} "
@@ -181,7 +200,7 @@ def main() -> None:
     #   • Neither set                → both use live GCP (ADC required)
     #   • Only PUBSUB set            → mixed: emulator Pub/Sub + live GCS (ADC needed for GCS)
     _pubsub_emulated = bool(os.environ.get("PUBSUB_EMULATOR_HOST"))
-    _storage_provider = os.getenv("STORAGE_PROVIDER", "gcp").strip().lower()
+    _storage_provider = settings.storage_provider
     _uses_gcp_storage = _storage_provider in {"gcp", "gcs"}
     _storage_emulated = _uses_gcp_storage and bool(os.environ.get("STORAGE_EMULATOR_HOST"))
     _needs_adc = (not _pubsub_emulated or (_uses_gcp_storage and not _storage_emulated)) and not settings.gcp.sa_path

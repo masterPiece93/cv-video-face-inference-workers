@@ -2,10 +2,16 @@
 import os
 from typing import Final, Annotated, Optional, Literal
 
-from pydantic import Field, AfterValidator
+from pydantic import Field, AfterValidator, model_validator
 from pydantic_settings import BaseSettings
 
-from common.utils.setting_utilities import Validators, CommonMeta
+from common.utils.setting_utilities import (
+    CommonMeta,
+    MinioSettings,
+    StorageProviderField,
+    Validators,
+    validate_storage_provider_settings,
+)
 
 
 DEFAULT_SERVICE_NAME: Final[str] = "Onboarding Verification Worker"
@@ -43,6 +49,11 @@ class Settings(BaseSettings):
     gcp: GcpSettings
     ingest: IngestProcessSettings = IngestProcessSettings()
 
+    # Storage backend selection
+    # gcp | gcs (default, Google Cloud Storage) | minio (S3-compatible)
+    storage_provider: StorageProviderField = "gcp"
+    minio: MinioSettings = Field(default_factory=MinioSettings)
+
     # Encoder for onboarding reference images (mandatory)
     encoder_backend: Literal["face_recognition", "fdetect"] = "face_recognition"
     fdetect_channel: Optional[str] = None
@@ -54,6 +65,12 @@ class Settings(BaseSettings):
     debug_mode: bool = False
     log_format: Literal["text", "json"] = "text"
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
+
+    @model_validator(mode="after")
+    def _validate_storage_provider(self) -> "Settings":
+        """Require MinIO settings when ``storage_provider=minio``."""
+        validate_storage_provider_settings(self.storage_provider, self.minio)
+        return self
 
     class Config(CommonMeta):
         env_file = _DEFAULT_ENV_FILE

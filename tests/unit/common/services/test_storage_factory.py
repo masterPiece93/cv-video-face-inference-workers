@@ -7,12 +7,11 @@ from common.services.cloud.storage.factory import get_storage_service
 
 
 class TestStorageFactory:
-    def test_default_provider_is_gcp(self):
+    def test_gcp_provider_returns_gcp_service(self):
         with patch("common.services.cloud.storage.factory.GCPStorageService") as mock_gcp:
             expected = object()
             mock_gcp.return_value = expected
-            with patch.dict("os.environ", {}, clear=False):
-                result = get_storage_service(sa_path="/tmp/sa.json")
+            result = get_storage_service("gcp", sa_path="/tmp/sa.json")
         mock_gcp.assert_called_once_with(sa_path="/tmp/sa.json")
         assert result is expected
 
@@ -20,21 +19,43 @@ class TestStorageFactory:
         with patch("common.services.cloud.storage.factory.GCPStorageService") as mock_gcp:
             expected = object()
             mock_gcp.return_value = expected
-            with patch.dict("os.environ", {"STORAGE_PROVIDER": "gcs"}, clear=False):
-                result = get_storage_service(sa_path=None)
+            result = get_storage_service("gcs", sa_path=None)
         mock_gcp.assert_called_once_with(sa_path=None)
         assert result is expected
 
-    def test_minio_provider_uses_minio_service(self):
-        with patch("common.services.cloud.storage.factory.MinioStorageService.from_env") as mock_from_env:
+    def test_provider_is_case_insensitive(self):
+        with patch("common.services.cloud.storage.factory.GCPStorageService") as mock_gcp:
             expected = object()
-            mock_from_env.return_value = expected
-            with patch.dict("os.environ", {"STORAGE_PROVIDER": "minio"}, clear=False):
-                result = get_storage_service(sa_path="ignored")
-        mock_from_env.assert_called_once_with()
+            mock_gcp.return_value = expected
+            result = get_storage_service("GCS")
+        mock_gcp.assert_called_once_with(sa_path=None)
         assert result is expected
 
+    def test_minio_provider_builds_minio_service(self):
+        with patch("common.services.cloud.minio.MinioStorageService") as mock_minio:
+            expected = object()
+            mock_minio.return_value = expected
+            result = get_storage_service(
+                "minio",
+                minio_endpoint="localhost:9000",
+                minio_access_key="k",
+                minio_secret_key="s",
+                minio_secure=True,
+                minio_region="us-west-1",
+            )
+        mock_minio.assert_called_once_with(
+            endpoint="localhost:9000",
+            access_key="k",
+            secret_key="s",
+            secure=True,
+            region_name="us-west-1",
+        )
+        assert result is expected
+
+    def test_minio_missing_config_raises_value_error(self):
+        with pytest.raises(ValueError, match="MinIO storage requires"):
+            get_storage_service("minio", minio_endpoint="localhost:9000")
+
     def test_invalid_provider_raises_value_error(self):
-        with patch.dict("os.environ", {"STORAGE_PROVIDER": "azure"}, clear=False):
-            with pytest.raises(ValueError, match="Unsupported STORAGE_PROVIDER"):
-                get_storage_service()
+        with pytest.raises(ValueError, match="Unsupported storage provider"):
+            get_storage_service("azure")

@@ -65,7 +65,16 @@ match ENV_NAME:
 
 def create_app(settings: Settings) -> tuple:
     sa_path = str(settings.gcp.sa_path) if settings.gcp.sa_path else None
-    storage = get_storage_service(sa_path=sa_path)
+    # Storage — provider chosen by the STORAGE_PROVIDER setting (default=gcp).
+    storage = get_storage_service(
+        settings.storage_provider,
+        sa_path=sa_path,
+        minio_endpoint=settings.minio.endpoint,
+        minio_access_key=settings.minio.access_key,
+        minio_secret_key=settings.minio.secret_key,
+        minio_secure=settings.minio.secure,
+        minio_region=settings.minio.region,
+    )
 
     if settings.encoder_backend == "fdetect":
         if not settings.fdetect_channel:

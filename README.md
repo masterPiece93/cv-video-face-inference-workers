@@ -239,22 +239,29 @@ OnBoarding Flow
 
 **Cloud Storage ( Bucket )**
 
-The workers now support selectable object storage via environment variable:
+The workers support selectable object storage via the `STORAGE_PROVIDER`
+**setting** (resolved by each worker's `Settings`, not read ad-hoc from the
+environment):
 
 - `STORAGE_PROVIDER=gcp` (default, backward compatible)
 - `STORAGE_PROVIDER=gcs` (alias of `gcp`)
 - `STORAGE_PROVIDER=minio`
 
-When using `minio`, configure:
+When using `minio`, configure the connection with the `MINIO__` prefix
+(consistent with the `GCP__` nested-settings convention):
 
-- `MINIO_ENDPOINT` (example: `localhost:9000`)
-- `MINIO_ACCESS_KEY`
-- `MINIO_SECRET_KEY`
-- `MINIO_SECURE` (`true` / `false`, default `false`)
-- `MINIO_REGION` (optional, default `us-east-1`)
+- `MINIO__ENDPOINT` (example: `localhost:9000`)
+- `MINIO__ACCESS_KEY`
+- `MINIO__SECRET_KEY`
+- `MINIO__SECURE` (`true` / `false`, default `false`)
+- `MINIO__REGION` (optional, default `us-east-1`)
 
 Notes:
 
+- The selected provider is passed to `get_storage_service(provider, ...)`; the
+  factory does not read environment variables itself.
+- When `STORAGE_PROVIDER=minio`, the required `MINIO__*` settings are validated
+  at startup (missing values fail fast with a clear error).
 - Message schema stays unchanged (`bucket_name` and object paths are reused).
 - Pub/Sub remains on GCP in the current architecture.
 - Existing GCP flow remains default if `STORAGE_PROVIDER` is not set.

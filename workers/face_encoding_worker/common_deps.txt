@@ -1,6 +1,8 @@
 # List common modules this worker needs (one path per line, relative to repo root)
 # Only these will be copied into the Docker image.
 common/services/cloud/gcp/*
+common/services/cloud/storage/*
+common/services/cloud/minio/*
 common/services/logging_service.py
 common/services/errors.py
 common/services/encoding/*
